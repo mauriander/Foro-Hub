@@ -1,5 +1,5 @@
 package com.example.Foro_Hub.controller;
-
+import com.example.Foro_Hub.domain.usuario.UsuarioService;
 import com.example.Foro_Hub.domain.usuario.*;
 import jakarta.validation.ConstraintViolationException;
 import jakarta.validation.Valid;
@@ -34,7 +34,7 @@ public class UsuarioController {
      * ENDPOINT :
      * http://localhost:8080/usuario
      ************************************/
-    @PostMapping("/registro")
+ /* @PostMapping("/registro")
     @Transactional
     public ResponseEntity<?> registrarUsuario(@RequestBody @Valid RegistroUsuarioDTO registroUsuarioDTO, UriComponentsBuilder uriComponentsBuilder) {
         try {
@@ -45,8 +45,7 @@ public class UsuarioController {
         } catch (ConstraintViolationException ex) {
             return ResponseEntity.badRequest().body("Validation failed: " + ex.getMessage());
         }
-    }
-
+    }*/
     /**************************************
      * REST API GET
      * Obtener todos los Usuarios
@@ -55,7 +54,7 @@ public class UsuarioController {
      ***************************************/
     @GetMapping("/usuarios")
     public ResponseEntity<Page<ListarUsuariosDTO>> listarUsuarios(@PageableDefault(size = 10) Pageable paged) {
-        return ResponseEntity.ok(usuarioRepository.findByActiveTrue(paged).map(ListarUsuariosDTO::new));
+        return ResponseEntity.ok(usuarioRepository.findByActivoTrue(paged).map(ListarUsuariosDTO::new));
     }
 
     /************************************************
@@ -110,5 +109,17 @@ public class UsuarioController {
         Usuario usuario = usuarioRepository.getReferenceById(id);
         var usuarioDetail = new RespuestaUsuarioDTO(usuario.getId(), usuario.getNombre());
         return ResponseEntity.ok(usuarioDetail);
+    }
+
+    @RequestMapping("/usuarios")
+    public class InactivacionUsuarioController {
+
+        @Autowired
+        private UsuarioService usuarioService;
+
+        @PostMapping("/desactivar/{id}")
+        public RegistroUsuarioDTO desactivarUsuario(@PathVariable Long id) {
+            return usuarioService.desactivarUsuario(id);
+        }
     }
 }

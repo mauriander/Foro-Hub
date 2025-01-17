@@ -19,19 +19,21 @@ import java.util.Optional;
 public class TokenService {
     @Autowired
     private UsuarioRepository usuarioRepository;
+
     public String generarToken(Usuario usuario){
         try {
             Algorithm algorithm = Algorithm.HMAC256(usuario.getPassword());
             return JWT.create()
                     .withIssuer("foro hub")
                     .withSubject(usuario.getUsername())
-                    .withClaim("id",usuario.getId())
+                    .withClaim("id", usuario.getId())
                     .withExpiresAt(expirationdate())
                     .sign(algorithm);
         } catch (JWTCreationException exception) {
-            throw new RuntimeException();
+            throw new RuntimeException("Error al generar el token", exception);
         }
     }
+
     public String getSubject(String token){
         if (token == null) {
             throw new IllegalArgumentException("El token es nulo.");
@@ -43,9 +45,7 @@ public class TokenService {
                 throw new IllegalArgumentException("Token no válido: Asunto no encontrado");
             }
             Optional<Usuario> usuario = usuarioRepository.findByEmail(username);
-
-            //Usuario usuario = (Usuario) usuarioRepository.findByEmail(username);
-            if (usuario == null) {
+            if (usuario.isEmpty()) {
                 throw new IllegalArgumentException("Usuario no encontrado por nombre de usuario: " + username);
             }
 
@@ -60,7 +60,8 @@ public class TokenService {
             throw new IllegalArgumentException("Token no válido: " + e.getMessage(), e);
         }
     }
-    private Instant expirationdate( ){
+
+    private Instant expirationdate() {
         return LocalDateTime.now().plusHours(2).toInstant(ZoneOffset.of("-05:00"));
     }
 }

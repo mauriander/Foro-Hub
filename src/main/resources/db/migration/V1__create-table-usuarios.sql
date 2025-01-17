@@ -4,5 +4,6 @@ CREATE TABLE usuarios (
    email VARCHAR(255) NOT NULL UNIQUE,
    username VARCHAR(255) NOT NULL UNIQUE,
    clave  VARCHAR(512) NOT NULL,
-    active BOOLEAN NOT NULL
+    activo BOOLEAN NOT NULL
 );
+

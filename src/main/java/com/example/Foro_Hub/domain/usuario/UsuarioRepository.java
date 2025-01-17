@@ -7,8 +7,8 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import java.util.Optional;
 @Repository
-public interface UsuarioRepository  extends JpaRepository<Usuario, Long> {
-    Page<Usuario> findByActiveTrue(Pageable pageable);
+public interface UsuarioRepository extends JpaRepository<Usuario, Long> {
+    Page<Usuario> findByActivoTrue(Pageable pageable);
 
     Optional<Usuario> findByEmail(String email);
 
@@ -17,5 +17,4 @@ public interface UsuarioRepository  extends JpaRepository<Usuario, Long> {
     boolean existsByUsername(String username);
 
     Optional<Usuario> findByUsername(String username);
-
 }
