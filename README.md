@@ -1,6 +1,38 @@
-# Documentación de la API - Foro Hub
+# Desafío: Crear un Foro API REST
 
-Bienvenido a la documentación de la API del proyecto Foro Hub. A continuación, se detallan los endpoints de la API, junto con los métodos HTTP, sus descripciones y la salida esperada.
+## Introducción
+
+En este reto, volcamos los conocimientos adquiridos en Java y Spring Boot para crear un sistema que permita a los usuarios interactuar en un foro, creando, actualizando, y eliminando tópicos, así como participando en las discusiones.
+
+Este proyecto está basado en el concepto de un foro donde los usuarios pueden registrar sus dudas, sugerencias y respuestas. Además, se implementa una capa de seguridad utilizando JWT (JSON Web Tokens) para asegurar que solo los usuarios autenticados puedan realizar ciertas acciones como crear o eliminar tópicos.
+
+## Tecnologías Utilizadas
+
+- **Java**: Lenguaje de programación para el backend.
+- **Spring Boot**: Framework para el desarrollo rápido de aplicaciones Java.
+- **Spring Security**: Para implementar la autenticación con JWT.
+- **JPA/Hibernate**: Para la persistencia de datos.
+- **Insomnia/Postman**: Herramientas para probar los endpoints de la API.
+- **Base de Datos**: Puedes usar la base de datos de tu preferencia (H2, MySQL, PostgreSQL, etc.).
+
+## Endpoints
+
+Aquí están los principales endpoints de nuestra API REST para gestionar tópicos y respuestas en el foro. Los métodos `POST` están marcados en verde, los `DELETE` en rojo y los `GET` en azul para facilitar su identificación.
+
+#### **Registrar un nuevo Tópico (POST)**
+
+- **Ruta**: `/topicos/registrar`
+- **Descripción**: Permite a un usuario registrar un nuevo tópico en el foro.
+- **Autenticación**: Requiere un token JWT.
+- **Request Body**:
+
+```json
+{
+  "idUsuario": 1,
+  "mensaje": "¿Cómo implementar seguridad en Spring?",
+  "nombreCurso": "Spring Boot",
+  "titulo": "Seguridad en Spring"
+}
 
 ## Endpoints
 
@@ -154,3 +186,4 @@ Respuesta (Response):
 {
 "token": "JWTTokenAquí"
 }
+```

@@ -5,7 +5,7 @@ CREATE TABLE topicos (
     fecha DATETIME NOT NULL,
     status ENUM('ACTIV0', 'INACTIVO', 'SOLUCIONADO') NOT NULL,
     autor_id BIGINT,
-    nombreCurso VARCHAR(255) NOT NULL,
+    nombre_curso VARCHAR(255) NOT NULL,
     activo BOOLEAN NOT NULL,
     FOREIGN KEY (autor_id) REFERENCES usuarios(id)
 );
