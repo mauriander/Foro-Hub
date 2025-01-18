@@ -36,6 +36,9 @@ public class Respuesta {
     @Column(name = "activo", nullable = false)
     private boolean activo;
 
+    public Respuesta() {
+        // Constructor por defecto
+    }
     public Respuesta(Long id, String solucion, Usuario autor, Topico topico, LocalDateTime fechaCreacion, boolean activo) {
         this.id = id;
         this.solucion = solucion;

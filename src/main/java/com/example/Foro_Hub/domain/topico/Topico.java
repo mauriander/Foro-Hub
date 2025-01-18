@@ -76,6 +76,9 @@ public class Topico {
     @Column(name = "activo", nullable = false)
     private boolean activo;
 
+    public Topico() {
+        // Constructor por defecto
+    }
     public Topico(String titulo, String mensaje, LocalDateTime fecha, Status status, Usuario autor, String nombreCurso) {
         this.titulo = titulo;
         this.mensaje = mensaje;

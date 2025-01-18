@@ -6,4 +6,3 @@ CREATE TABLE usuarios (
    clave  VARCHAR(512) NOT NULL,
     activo BOOLEAN NOT NULL
 );
-

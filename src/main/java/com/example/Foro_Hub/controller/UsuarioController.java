@@ -34,18 +34,19 @@ public class UsuarioController {
      * ENDPOINT :
      * http://localhost:8080/usuario
      ************************************/
- /* @PostMapping("/registro")
+    @PostMapping("/registro")
     @Transactional
     public ResponseEntity<?> registrarUsuario(@RequestBody @Valid RegistroUsuarioDTO registroUsuarioDTO, UriComponentsBuilder uriComponentsBuilder) {
         try {
-            RegistroUsuarioDTO usuario = usuarioService.registrarUsuario(registroUsuarioDTO);
-            RespuestaUsuarioDTO respuestaUsuarioDTO = new RespuestaUsuarioDTO(usuario.id(), usuario.nombre());
-            URI url = uriComponentsBuilder.path("/usuario/{id}").buildAndExpand(usuario.id()).toUri();
-            return ResponseEntity.created(url).body(respuestaUsuarioDTO);
+            UsuarioDTO usuarioDTO = usuarioService.registrarUsuario(registroUsuarioDTO);
+            // Asegúrate de que usuarioDTO tenga los atributos correctos, como id y nombre.
+            RespuestaUsuarioDTO respuesta = new RespuestaUsuarioDTO(usuarioDTO.id(), usuarioDTO.nombre());
+            URI url = uriComponentsBuilder.path("/usuario/{id}").buildAndExpand(usuarioDTO.id()).toUri();
+            return ResponseEntity.created(url).body(respuesta);
         } catch (ConstraintViolationException ex) {
             return ResponseEntity.badRequest().body("Validation failed: " + ex.getMessage());
         }
-    }*/
+    }
     /**************************************
      * REST API GET
      * Obtener todos los Usuarios

@@ -37,7 +37,7 @@ public class Usuario implements UserDetails {
 
     @Column(name = "activo", nullable = false)
     private boolean activo;
-
+    public Usuario() {}
     public Usuario(RegistroUsuarioDTO registroUsuarioDTO, BCryptPasswordEncoder passwordEncoder) {
         this.nombre = registroUsuarioDTO.nombre();
         this.username = registroUsuarioDTO.username();

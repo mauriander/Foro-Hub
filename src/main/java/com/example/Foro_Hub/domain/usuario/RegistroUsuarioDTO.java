@@ -21,4 +21,27 @@ public record RegistroUsuarioDTO(
         @NotBlank(message = "Debe tener entre 6 y 10 caracteres.")
         @Pattern(regexp = "^(?=.*[A-Za-z])(?=.*\\d)[A-Za-z\\d]{6,10}$", message = "La contraseña debe tener entre 6 y 10 caracteres, incluyendo letras y números.")
         String clave
-) {}
+) {@Override
+public Long id() {
+        return id;
+}
+
+        @Override
+        public String nombre() {
+                return nombre;
+        }
+
+        @Override
+        public String username() {
+                return username;
+        }
+
+        @Override
+        public String email() {
+                return email;
+        }
+
+        @Override
+        public String clave() {
+                return clave;
+        }}

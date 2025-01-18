@@ -20,10 +20,13 @@ public class UsuarioService {
         Usuario usuario = new Usuario(registroUsuarioDTO, passwordEncoder);
         usuarioRepository.save(usuario);
 
+        // Ahora asegurate de devolver todos los campos necesarios
         return new UsuarioDTO(
+                usuario.getId(),
+                usuario.getNombre(),
                 usuario.getEmail(),
                 usuario.getUsername(),
-                null // No devolver la contraseña por seguridad
+                usuario.getPassword() // O no devolver la contraseña por seguridad si es necesario
         );
     }
 
