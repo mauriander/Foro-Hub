@@ -22,11 +22,10 @@ public class SecurityConfiguration implements WebMvcConfigurer {
     @Autowired
     private SecurityFilter securityFilter;
 
-    // Configurar CORS globalmente
     @Override
     public void addCorsMappings(CorsRegistry registry) {
         registry.addMapping("/**")
-                .allowedOrigins("*") // Permite solicitudes desde cualquier dominio. Cambia por un dominio específico si lo prefieres.
+                .allowedOrigins("*")
                 .allowedMethods("GET", "POST", "PUT", "DELETE");
     }
 
@@ -34,13 +33,12 @@ public class SecurityConfiguration implements WebMvcConfigurer {
     public SecurityFilterChain securityFilterChain(HttpSecurity httpSecurity) throws Exception {
         httpSecurity.csrf(csrf -> csrf.disable());
         httpSecurity.sessionManagement(sess -> sess
-                        .sessionCreationPolicy(SessionCreationPolicy
-                                .STATELESS))
+                        .sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .authorizeHttpRequests((authorizeRequests) ->
                         authorizeRequests
-                                .requestMatchers(HttpMethod.POST, "/login")
+                                .requestMatchers(HttpMethod.POST, "/usuario/login")
                                 .permitAll()
-                                .requestMatchers(HttpMethod.POST, "/registro")
+                                .requestMatchers(HttpMethod.POST, "/usuario/registro")
                                 .permitAll()
                                 .requestMatchers("/swagger-ui.html", "/v3/api-docs/**","/swagger-ui/**")
                                 .permitAll()

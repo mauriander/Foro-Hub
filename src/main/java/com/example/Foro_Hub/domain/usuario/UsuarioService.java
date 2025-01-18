@@ -4,7 +4,6 @@ import com.example.Foro_Hub.infra.errores.ValidacionDeIntegridad;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
-
 @Service
 public class UsuarioService {
 
@@ -17,16 +16,23 @@ public class UsuarioService {
     public UsuarioDTO registrarUsuario(RegistroUsuarioDTO registroUsuarioDTO) {
         validarUnicidadUsuario(registroUsuarioDTO);
 
-        Usuario usuario = new Usuario(registroUsuarioDTO, passwordEncoder);
+        // Codificar la contraseña
+        String encodedPassword = passwordEncoder.encode(registroUsuarioDTO.clave());
+        Usuario usuario = new Usuario(
+                registroUsuarioDTO.nombre(),
+                registroUsuarioDTO.username(),
+                registroUsuarioDTO.email(),
+                encodedPassword,
+                true // Usuario activo por defecto
+        );
         usuarioRepository.save(usuario);
 
-        // Ahora asegurate de devolver todos los campos necesarios
         return new UsuarioDTO(
                 usuario.getId(),
                 usuario.getNombre(),
                 usuario.getEmail(),
                 usuario.getUsername(),
-                usuario.getPassword() // O no devolver la contraseña por seguridad si es necesario
+                encodedPassword // Proporcionar la contraseña codificada en clave
         );
     }
 
@@ -39,22 +45,10 @@ public class UsuarioService {
         }
     }
 
-
-
-
     public RegistroUsuarioDTO desactivarUsuario(Long id) {
-        var usuario = usuarioRepository.findById(id)
-                .orElseThrow(() -> new ValidacionDeIntegridad("El usuario con el ID proporcionado no existe."));
-
-        usuario.setActivo(false);
-        usuarioRepository.save(usuario);
-
+        Usuario usuario = usuarioRepository.findById(id) .orElseThrow(() -> new ValidacionDeIntegridad("El usuario con el ID proporcionado no existe."));
+        usuario.setActivo(false); usuarioRepository.save(usuario);
         return new RegistroUsuarioDTO(
-                usuario.getId(),
-                usuario.getNombre(),
-                usuario.getUsername(),
-                usuario.getEmail(),
-                usuario.getPassword()
-        );
+                usuario.getId(), usuario.getNombre(), usuario.getUsername(), usuario.getEmail(), usuario.getPassword() );
     }
 }

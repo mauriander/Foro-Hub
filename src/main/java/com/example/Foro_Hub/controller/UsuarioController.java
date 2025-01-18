@@ -1,6 +1,10 @@
 package com.example.Foro_Hub.controller;
 import com.example.Foro_Hub.domain.usuario.UsuarioService;
 import com.example.Foro_Hub.domain.usuario.*;
+import com.example.Foro_Hub.infra.errores.ValidacionDeIntegridad;
+import com.example.Foro_Hub.infra.security.JWTTokenDTO;
+import com.example.Foro_Hub.infra.security.TokenService;
+
 import jakarta.validation.ConstraintViolationException;
 import jakarta.validation.Valid;
 import org.springframework.data.domain.Page;
@@ -27,6 +31,9 @@ public class UsuarioController {
 
     @Autowired
     private BCryptPasswordEncoder bCryptPasswordEncoder;
+
+    @Autowired
+    private TokenService tokenService;
 
     /***********************************
      * REST API POST
@@ -64,26 +71,30 @@ public class UsuarioController {
      * ENDPOINT :
      * http://localhost:8080/usuario/1
      *************************************************/
+
     @PutMapping("/{id}")
     @Transactional
     public ResponseEntity<ActualizacionUsuarioDTO> actualizacionUsuario(@PathVariable Long id,
                                                                         @RequestBody @Valid ActualizacionUsuarioDTO actualizacionUsuarioDTO) {
-        Usuario usuario = usuarioRepository.getReferenceById(id);
-        usuario.actualizacionUsuario(actualizacionUsuarioDTO);
-        //return ResponseEntity.ok(new ActualizacionUsuarioDTO(usuario.getId(), usuario.getName(), usuario.getEmail(),usuario.getPassword(),usuario.toString(), usuario.getUsername()));
+        Usuario usuario = usuarioRepository.findById(id)
+                .orElseThrow(() -> new ValidacionDeIntegridad("El usuario con el ID proporcionado no existe."));
+
+        usuario.actualizacionUsuario(actualizacionUsuarioDTO, bCryptPasswordEncoder);
+        usuarioRepository.save(usuario);
+
         return ResponseEntity.ok(
                 new ActualizacionUsuarioDTO(
                         usuario.getId(),
                         usuario.getNombre(),
                         usuario.getEmail(),
                         usuario.isActivo(),
-                        usuario.getPassword(),
-                        usuario.getUsername()
+                        usuario.getUsername(),
+                        usuario.getPassword() // Añadir el campo de clave aquí
                 )
         );
-
-
     }
+
+
 
     /************************************************
      * REST API DELETE
@@ -126,16 +137,35 @@ public class UsuarioController {
 
     @PostMapping("/login")
     public ResponseEntity<?> login(@RequestBody LoginUsuarioDTO loginUsuarioDTO) {
-        // Busca el usuario por su email o username
-        Usuario usuario = usuarioRepository.findByEmail(loginUsuarioDTO.getEmail())
-                .orElseThrow(() -> new IllegalArgumentException("Usuario no encontrado"));
+        try {
+            // Log para verificar el email ingresado
+            System.out.println("Email ingresado: " + loginUsuarioDTO.getEmail());
 
-        // Valida la contraseña
-        if (!bCryptPasswordEncoder.matches(loginUsuarioDTO.getPassword(), usuario.getPassword())) {
-            return ResponseEntity.status(401).body("Credenciales incorrectas");
+            // Busca el usuario por su email
+            Usuario usuario = usuarioRepository.findByEmail(loginUsuarioDTO.getEmail())
+                    .orElseThrow(() -> new IllegalArgumentException("Usuario no encontrado"));
+
+            // Log para verificar la contraseña almacenada
+            System.out.println("Contraseña almacenada: " + usuario.getPassword());
+
+            // Valida la contraseña
+            if (!bCryptPasswordEncoder.matches(loginUsuarioDTO.getPassword(), usuario.getPassword())) {
+                System.out.println("Contraseña ingresada: " + loginUsuarioDTO.getPassword());
+                return ResponseEntity.status(401).body("Credenciales incorrectas");
+            }
+
+            // Genera el token JWT
+            String token = tokenService.generarToken(usuario);
+            return ResponseEntity.ok(new JWTTokenDTO(token));
+
+        } catch (Exception e) {
+            e.printStackTrace();
+            return ResponseEntity.status(500).body("Error de servidor: " + e.getMessage());
         }
-
-        // Opcional: Generar un token JWT o enviar información básica del usuario
-        return ResponseEntity.ok(new RespuestaUsuarioDTO(usuario.getId(), usuario.getNombre()));
     }
+
+
+
+
+
 }

@@ -15,9 +15,9 @@ public class InactivacionUsuarioController {
 
     @Autowired
     private UsuarioService usuarioService;
-
+/*
     @PostMapping("/desactivar/{id}")
     public RegistroUsuarioDTO desactivarUsuario(@PathVariable Long id) {
         return usuarioService.desactivarUsuario(id);
-    }
+    }*/
 }

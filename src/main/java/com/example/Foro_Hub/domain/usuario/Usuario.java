@@ -11,6 +11,17 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import java.util.Collection;
 import java.util.List;
 import java.util.Objects;
+import jakarta.persistence.*;
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
+import org.springframework.security.core.userdetails.UserDetails;
+
+import java.util.Collection;
+import java.util.List;
+import java.util.Objects;
 
 @Entity(name = "Usuario")
 @Table(name = "usuarios")
@@ -18,32 +29,19 @@ import java.util.Objects;
 @NoArgsConstructor
 @AllArgsConstructor
 public class Usuario implements UserDetails {
-
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
-
-    @Column(name = "nombre", nullable = false)
-    private String nombre;
-
-    @Column(name = "username", nullable = false)
-    private String username;
-
-    @Column(name = "email", nullable = false)
-    private String email;
-
-    @Column(name = "password", nullable = false)
-    private String password;
-
-    @Column(name = "activo", nullable = false)
+    private Long id; @Column(name = "nombre", nullable = false)
+    private String nombre; @Column(name = "username", nullable = false)
+    private String username; @Column(name = "email", nullable = false)
+    private String email; @Column(name = "password", nullable = false)
+    private String password; @Column(name = "activo", nullable = false)
     private boolean activo;
-    public Usuario() {}
-    public Usuario(RegistroUsuarioDTO registroUsuarioDTO, BCryptPasswordEncoder passwordEncoder) {
-        this.nombre = registroUsuarioDTO.nombre();
-        this.username = registroUsuarioDTO.username();
-        this.email = registroUsuarioDTO.email();
-        this.password = passwordEncoder.encode(registroUsuarioDTO.clave());
-        this.activo = true; // El usuario se activa por defecto
+    // Constructor adicional requerido por JPA
+   public Usuario() {}
+    // Constructor con argumentos
+    public Usuario(String nombre, String username, String email, String password, boolean activo)
+    { this.nombre = nombre; this.username = username; this.email = email; this.password = password; this.activo = activo;
     }
 
     public Long getId() {
@@ -54,21 +52,24 @@ public class Usuario implements UserDetails {
         this.id = id;
     }
 
+
+    public void setNombre(String nombre) {
+        this.nombre = nombre;
+    }
+
     public String getNombre() {
         return nombre;
     }
 
-    public void setNombre(String nombre) {
-        this.nombre = nombre;
+    public String getEmail() {
+        return email;
     }
 
     public void setUsername(String username) {
         this.username = username;
     }
 
-    public String getEmail() {
-        return email;
-    }
+
 
     public void setEmail(String email) {
         this.email = email;
@@ -78,9 +79,7 @@ public class Usuario implements UserDetails {
         this.password = password;
     }
 
-    public boolean isActivo() {
-        return activo;
-    }
+
 
     public void setActivo(boolean activo) {
         this.activo = activo;
@@ -91,8 +90,8 @@ public class Usuario implements UserDetails {
         this.activo = false;
     }
 
-    // Método para actualizar el usuario
-    public void actualizacionUsuario(ActualizacionUsuarioDTO actualizacionUsuarioDTO) {
+
+    public void actualizacionUsuario(ActualizacionUsuarioDTO actualizacionUsuarioDTO, BCryptPasswordEncoder passwordEncoder) {
         if (actualizacionUsuarioDTO.nombre() != null) {
             this.nombre = actualizacionUsuarioDTO.nombre();
         }
@@ -103,9 +102,10 @@ public class Usuario implements UserDetails {
             this.username = actualizacionUsuarioDTO.username();
         }
         if (actualizacionUsuarioDTO.clave() != null && !actualizacionUsuarioDTO.clave().isEmpty()) {
-            this.password = actualizacionUsuarioDTO.clave();
+            this.password = passwordEncoder.encode(actualizacionUsuarioDTO.clave());
         }
     }
+
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
@@ -115,6 +115,10 @@ public class Usuario implements UserDetails {
     @Override
     public String getPassword() {
         return password;
+    }
+
+    public boolean isActivo() {
+        return activo;
     }
 
     @Override
