@@ -123,4 +123,19 @@ public class UsuarioController {
             return usuarioService.desactivarUsuario(id);
         }
     }
+
+    @PostMapping("/login")
+    public ResponseEntity<?> login(@RequestBody LoginUsuarioDTO loginUsuarioDTO) {
+        // Busca el usuario por su email o username
+        Usuario usuario = usuarioRepository.findByEmail(loginUsuarioDTO.getEmail())
+                .orElseThrow(() -> new IllegalArgumentException("Usuario no encontrado"));
+
+        // Valida la contraseña
+        if (!bCryptPasswordEncoder.matches(loginUsuarioDTO.getPassword(), usuario.getPassword())) {
+            return ResponseEntity.status(401).body("Credenciales incorrectas");
+        }
+
+        // Opcional: Generar un token JWT o enviar información básica del usuario
+        return ResponseEntity.ok(new RespuestaUsuarioDTO(usuario.getId(), usuario.getNombre()));
+    }
 }
