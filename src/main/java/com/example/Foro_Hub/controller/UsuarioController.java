@@ -35,12 +35,7 @@ public class UsuarioController {
     @Autowired
     private TokenService tokenService;
 
-    /***********************************
-     * REST API POST
-     * Nuevo Registro
-     * ENDPOINT :
-     * http://localhost:8080/usuario
-     ************************************/
+
     @PostMapping("/registro")
     @Transactional
     public ResponseEntity<?> registrarUsuario(@RequestBody @Valid RegistroUsuarioDTO registroUsuarioDTO, UriComponentsBuilder uriComponentsBuilder) {
@@ -54,23 +49,12 @@ public class UsuarioController {
             return ResponseEntity.badRequest().body("Validation failed: " + ex.getMessage());
         }
     }
-    /**************************************
-     * REST API GET
-     * Obtener todos los Usuarios
-     * ENDPOINT :
-     * http://localhost:8080/usuario/usuarios
-     ***************************************/
+
     @GetMapping("/usuarios")
     public ResponseEntity<Page<ListarUsuariosDTO>> listarUsuarios(@PageableDefault(size = 10) Pageable paged) {
         return ResponseEntity.ok(usuarioRepository.findByActivoTrue(paged).map(ListarUsuariosDTO::new));
     }
 
-    /************************************************
-     * REST API PUT
-     * Actualizar un usuario por id
-     * ENDPOINT :
-     * http://localhost:8080/usuario/1
-     *************************************************/
 
     @PutMapping("/{id}")
     @Transactional
@@ -96,12 +80,7 @@ public class UsuarioController {
 
 
 
-    /************************************************
-     * REST API DELETE
-     * Eliminar un usuario por id
-     * ENDPOINT :
-     * http://localhost:8080/usuario/1
-     *************************************************/
+
     @DeleteMapping("/{id}")
     @Transactional
     public ResponseEntity<Void> eliminarUsuario(@PathVariable Long id) {
@@ -110,12 +89,7 @@ public class UsuarioController {
         return ResponseEntity.noContent().build();
     }
 
-    /*******************************************
-     * REST API GET
-     * Obtener un Usuario pasando el id
-     * ENDPOINT :
-     * http://localhost:8080/usuario/1
-     ********************************************/
+
     @GetMapping("/{id}")
     public ResponseEntity<RespuestaUsuarioDTO> obtenerUsuario(@PathVariable Long id) {
         Usuario usuario = usuarioRepository.getReferenceById(id);
